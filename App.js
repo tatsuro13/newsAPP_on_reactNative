@@ -1,32 +1,46 @@
-import React from 'react';
-import { StyleSheet, Text, View, Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  FlatList,
+  SafeAreaView,
+} from 'react-native';
+import ListItem from './components/ListItem';
+import dummyarticles from './dummies/articles';
+import Constants from 'expo-constants';
+import axios from 'axios';
 
+const URL = `http://newsapi.org/v2/top-headlines?country=jp&category=business&apiKey=${Constants.manifest.extra.newsApiKey}`;
 export default function App() {
+  const [articles, setArticles] = useState([]);
+  useEffect(() => {
+    fetchArticles();
+  }, []);
+
+  const fetchArticles = async () => {
+    try {
+      const response = await axios.get(URL);
+      setArticles(response.data.articles);
+    } catch (error) {
+      console.error(error);
+    }
+  };
   return (
-    <View style={styles.container}>
-      <View style={styles.itemContrainer}>
-        <View style={styles.leftContainer}>
-          <Image
-            style={{ width: 100, height: 100 }}
-            source={{
-              uri: 'https://picsum.photos/200/200',
-            }}
+    <SafeAreaView styles={styles.container}>
+      <FlatList
+        data={articles}
+        renderItem={({ item }) => (
+          <ListItem
+            title={item.title}
+            imageUrl={item.urlToImage}
+            author={item.author}
           />
-        </View>
-        <View style={styles.rightContainer}>
-          <Text numberOfLines={3}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat. Duis aute irure dolor in
-            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-            culpa qui officia deserunt mollit anim id est laborum.
-          </Text>
-          <Text>ReactNews</Text>
-        </View>
-      </View>
-    </View>
+        )}
+        keyExtractor={(item, index) => index.toString()}
+      ></FlatList>
+    </SafeAreaView>
   );
 }
 
@@ -36,20 +50,5 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  itemContrainer: {
-    height: 100,
-    width: '100%',
-    borderColor: 'gray',
-    borderWidth: 1,
-    flexDirection: 'row',
-  },
-  leftContainer: {
-    // backgroundColor: 'red',
-    width: 100,
-  },
-  rightContainer: {
-    // backgroundColor: 'blue',
-    flex: 1,
   },
 });
