@@ -1,8 +1,8 @@
-const initialSatate = {
-  clips: []
-}
+const initialState = {
+  clips: [],
+};
 
-const reducer = (state = initialSatate, action) => {
+const reducer = (state = initialState, action) => {
   switch (action.type) {
     case 'ADD_CLIP':
       return {
@@ -17,6 +17,6 @@ const reducer = (state = initialSatate, action) => {
     default:
       return state;
   }
-}
+};
 
 export default reducer;

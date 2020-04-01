@@ -10,6 +10,7 @@ import {
 import ListItem from '../components/ListItem';
 import Constants from 'expo-constants';
 import axios from 'axios';
+import Loading from '../components/Loading';
 
 const URL = `http://newsapi.org/v2/top-headlines?country=jp&category=business&apiKey=${Constants.manifest.extra.newsApiKey}`;
 
@@ -18,17 +19,21 @@ const URL = `http://newsapi.org/v2/top-headlines?country=jp&category=business&ap
 export default HomeScreen = (props) => {
   const { navigation } = props;
   const [articles, setArticles] = useState([]);
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     fetchArticles();
   }, []);
 
   const fetchArticles = async () => {
+    setLoading(true)
     try {
       const response = await axios.get(URL);
       setArticles(response.data.articles);
     } catch (error) {
       console.error(error);
     }
+    setLoading(false);
   };
   return (
     <SafeAreaView styles={styles.container}>
@@ -44,6 +49,7 @@ export default HomeScreen = (props) => {
         )}
         keyExtractor={(item, index) => index.toString()}
       ></FlatList>
+      {loading && <Loading />}
     </SafeAreaView>
   );
 }
